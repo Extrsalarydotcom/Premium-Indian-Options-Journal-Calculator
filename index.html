@@ -1,0 +1,600 @@
+<!-- Premium Indian Options Journal Calculator (With Subscribe Checkbox Integration) -->
+<style>
+  .calc-container {
+    max-width: 650px;
+    margin: 30px auto;
+    padding: 30px;
+    border-radius: 16px;
+    background: linear-gradient(145deg, #1e293b, #0f172a);
+    color: #f8fafc;
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+    border: 1px solid #334155;
+  }
+  .calc-title {
+    text-align: center;
+    color: #38bdf8;
+    font-size: 26px;
+    font-weight: 700;
+    margin-bottom: 25px;
+    letter-spacing: 0.5px;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+  }
+  
+  /* Modern Glowing Login Screen Styling */
+  #loginScreen {
+    text-align: center;
+    padding: 20px 10px;
+  }
+  
+  #loginScreen input, #regFormPart input {
+    padding: 14px 18px;
+    width: 85%;
+    max-width: 320px;
+    border-radius: 10px;
+    border: 1px solid #475569;
+    background: rgba(15, 23, 42, 0.9);
+    color: #fff;
+    font-size: 15px;
+    text-align: center;
+    margin-bottom: 15px;
+    outline: none;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.4);
+    transition: all 0.3s ease;
+  }
+  #loginScreen input:focus, #regFormPart input:focus {
+    border-color: #38bdf8;
+    box-shadow: 0 0 12px rgba(56, 189, 248, 0.5), inset 0 2px 4px rgba(0,0,0,0.4);
+    background: #1e293b;
+  }
+
+  .btn-login {
+    padding: 14px 25px;
+    background: linear-gradient(135deg, #22c55e, #16a34a);
+    color: white;
+    font-weight: bold;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 16px;
+    width: 85%;
+    max-width: 320px;
+    box-shadow: 0 4px 15px rgba(34, 197, 94, 0.4);
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .btn-login:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(34, 197, 94, 0.6);
+  }
+
+  .btn-reg {
+    padding: 14px 25px;
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
+    color: white;
+    font-weight: bold;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 16px;
+    width: 85%;
+    max-width: 320px;
+    box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .btn-reg:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(59, 130, 246, 0.6);
+  }
+
+  .error-msg {
+    font-size: 14px;
+    margin-top: 15px;
+    font-weight: 500;
+  }
+
+  #calculatorContent {
+    display: none;
+  }
+
+  .input-group {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 15px;
+    margin-bottom: 15px;
+  }
+  .input-box {
+    display: flex;
+    flex-direction: column;
+  }
+  .input-box label {
+    font-size: 13px;
+    color: #94a3b8;
+    margin-bottom: 6px;
+    font-weight: 600;
+  }
+  .input-box input, .input-box select {
+    padding: 10px 14px;
+    border-radius: 8px;
+    border: 1px solid #475569;
+    background: #0f172a;
+    color: #f1f5f9;
+    font-size: 14px;
+    transition: all 0.3s ease;
+  }
+  .input-box input:focus, .input-box select:focus {
+    outline: none;
+    border-color: #38bdf8;
+    box-shadow: 0 0 8px rgba(56, 189, 248, 0.4);
+    background: #1e293b;
+  }
+  .input-box input[readonly] {
+    background: #1e293b;
+    border-color: #334155;
+    color: #94a3b8;
+    cursor: not-allowed;
+    font-weight: bold;
+  }
+  .divider {
+    border: 0;
+    border-top: 1px solid #334155;
+    margin: 20px 0;
+  }
+  .dashboard-panel {
+    background: rgba(15, 23, 42, 0.7);
+    padding: 20px;
+    border-radius: 12px;
+    border: 1px solid #334155;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 12px;
+  }
+  .dashboard-panel p {
+    margin: 0;
+    font-size: 14px;
+    padding: 8px 0;
+    border-bottom: 1px dashed #334155;
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  .btn-copy {
+    width: 100%;
+    margin-top: 25px;
+    padding: 14px;
+    background: linear-gradient(135deg, #22c55e, #16a34a);
+    color: white;
+    font-weight: bold;
+    font-size: 16px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .btn-copy:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(34, 197, 94, 0.4);
+  }
+
+  .btn-social {
+    width: 100%;
+    margin-top: 12px;
+    padding: 12px;
+    font-weight: bold;
+    font-size: 14px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    box-sizing: border-box;
+    color: white;
+    transition: transform 0.2s;
+  }
+  .btn-yt { background: linear-gradient(135deg, #ef4444, #dc2626); }
+  .btn-tg { background: linear-gradient(135deg, #0088cc, #006699); }
+  .btn-social:hover { transform: translateY(-2px); color: white; }
+</style>
+
+<div class="calc-container" id="option-journal-calculator">
+  
+  <div id="loginScreen">
+    <span style="background: #ef4444; color: #fff; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: bold;">@Extrasalary225</span>
+    <h2 class="calc-title" style="margin-top: 15px;">🔒 Automatic Access Portal</h2>
+    
+    <p style="color: #cbd5e1; font-size: 13px; margin-bottom: 15px; line-height: 1.5;">
+      पहले YouTube चैनल सब्सक्राइब करें और नीचे दिए गए बॉक्स पर टिक करके अपना पासवर्ड जनरेट करें!
+    </p>
+
+    <!-- YouTube & Telegram Action Buttons (Direct Subscribe Link with Popup) -->
+    <div style="display: flex; gap: 10px; justify-content: center; margin-bottom: 20px; flex-wrap: wrap;">
+      <a href="https://www.youtube.com/@Extrasalary225?sub_confirmation=1" target="_blank" class="btn-social btn-yt" style="width: 48%; margin-top:0;">🔴 Subscribe YouTube</a>
+      <a href="https://t.me/ExtrasalaryTrading" target="_blank" class="btn-social btn-tg" style="width: 48%; margin-top:0;">✈️ Join Telegram</a>
+    </div>
+
+    <!-- Tab Switch Buttons -->
+    <div style="display: flex; justify-content: center; gap: 10px; margin-bottom: 20px;">
+      <button onclick="switchAuthTab('login')" id="loginTabBtn" style="padding: 10px 18px; background: #38bdf8; color: #0f172a; font-weight: bold; border: none; border-radius: 8px; cursor: pointer; transition: 0.2s;">लॉग इन करें</button>
+      <button onclick="switchAuthTab('register')" id="regTabBtn" style="padding: 10px 18px; background: #334155; color: #fff; font-weight: bold; border: none; border-radius: 8px; cursor: pointer; transition: 0.2s;">नया पासवर्ड बनाएं</button>
+    </div>
+
+    <!-- Login Box -->
+    <div id="loginFormPart">
+      <input type="text" id="loginUser" placeholder="अपना यूजरनेम लिखें..." autocomplete="username"><br>
+      <input type="password" id="loginPass" placeholder="अपना पासवर्ड लिखें..." autocomplete="current-password"><br>
+      <button class="btn-login" onclick="handleAutoLogin()">Unlock Calculator</button>
+    </div>
+
+    <!-- Register Box with Mandatory Subscribe Checkbox -->
+    <div id="regFormPart" style="display: none;">
+      <input type="text" id="regUser" placeholder="नया यूजरनेम बनाएं..."><br>
+      
+      <!-- Smart Checkbox Feature -->
+      <div style="margin-bottom: 15px; text-align: left; display: inline-block; max-width: 320px; background: rgba(51, 65, 85, 0.4); padding: 10px; border-radius: 8px; border: 1px solid #475569;">
+        <label style="color: #cbd5e1; font-size: 13px; cursor: pointer; display: flex; align-items: center; gap: 8px;">
+          <input type="checkbox" id="subCheck" style="width: 18px; height: 18px; accent-color: #38bdf8; cursor: pointer;">
+          मैंने YouTube चैनल सब्सक्राइब कर लिया है
+        </label>
+      </div><br>
+
+      <button class="btn-reg" onclick="handleAutoRegister()">✨ पासवर्ड जनरेट करें</button>
+    </div>
+
+    <div id="errorMsg" class="error-msg"></div>
+  </div>
+
+  <div id="calculatorContent">
+    <div style="text-align: center; margin-bottom: 10px;">
+      <span style="background: #ef4444; color: #fff; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: bold;">@Extrasalary225</span>
+    </div>
+    <h2 class="calc-title" style="margin-top: 5px;">🇮🇳 Indian Options Trading Calculator</h2>
+    
+    <div class="input-group">
+      <div class="input-box">
+        <label>B: Date (तारीख):</label>
+        <input type="date" id="tradeDate">
+      </div>
+      <div class="input-box">
+        <label>C: Day (दिन):</label>
+        <select id="tradeDay">
+          <option>Monday</option><option>Tuesday</option><option>Wednesday</option>
+          <option>Thursday</option><option>Friday</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="input-group">
+      <div class="input-box">
+        <label>D: Index / Stock:</label>
+        <select id="indexType" onchange="calculateOptions()">
+          <option value="NIFTY">NIFTY 50 (Lot: 65)</option>
+          <option value="BANKNIFTY">BANK NIFTY (Lot: 50)</option>
+          <option value="SENSEX">SENSEX (Lot: 20)</option>
+          <option value="FINNIFTY">FIN NIFTY (Lot: 25)</option>
+          <option value="MIDCPNIFTY">MIDCAP NIFTY (Lot: 50)</option>
+        </select>
+      </div>
+      <div class="input-box">
+        <label>E: Option Type:</label>
+        <select id="optionType">
+          <option value="CE">CE (Call)</option>
+          <option value="PE">PE (Put)</option>
+        </select>
+      </div>
+      <div class="input-box">
+        <label>F: Strike Price:</label>
+        <input type="number" id="strikePrice" value="24000">
+      </div>
+    </div>
+
+    <div class="input-group">
+      <div class="input-box">
+        <label>G: Expiry Date:</label>
+        <input type="date" id="expiryDate">
+      </div>
+      <div class="input-box">
+        <label>H: Strategy:</label>
+        <input type="text" id="strategy" value="Breakout">
+      </div>
+      <div class="input-box">
+        <label>I: Buy/Sell:</label>
+        <select id="buySell" onchange="calculateOptions()">
+          <option value="BUY">BUY</option>
+          <option value="SELL">SELL</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="input-group">
+      <div class="input-box">
+        <label>J: Lots (लॉट):</label>
+        <input type="number" id="numLots" value="1" min="1" oninput="calculateOptions()">
+      </div>
+      <div class="input-box">
+        <label>K: Entry Premium:</label>
+        <input type="number" id="entryPremium" value="120" oninput="calculateOptions()">
+      </div>
+      <div class="input-box">
+        <label>L: Exit Premium:</label>
+        <input type="number" id="exitPremium" value="150" oninput="calculateOptions()">
+      </div>
+    </div>
+
+    <div class="input-group">
+      <div class="input-box">
+        <label>Stop Loss Premium:</label>
+        <input type="number" id="slPremium" value="100" oninput="calculateOptions()">
+      </div>
+      <div class="input-box">
+        <label>P: Brokerage/Taxes (Rs.) [Auto]:</label>
+        <input type="number" id="brokerage" value="0" readonly>
+      </div>
+      <div class="input-box">
+        <label>Win/Loss Status [Auto]:</label>
+        <input type="text" id="winLoss" value="WIN" readonly>
+      </div>
+    </div>
+
+    <div class="input-group">
+      <div class="input-box">
+        <label>T: Note (टिप्पणी):</label>
+        <input type="text" id="tradeNote" value="VWAP Setup">
+      </div>
+      <div class="input-box">
+        <label>Chart Link (इमेज/चार्ट URL):</label>
+        <input type="text" id="chartLink" value="https://tradingview.com/...">
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- Dynamic Output Dashboard -->
+    <div class="dashboard-panel">
+      <p><strong>J: Total Qty:</strong> <span id="outQty" style="color:#f59e0b;">65 Qty (1 Lots)</span></p>
+      <p><strong>M: Total Points:</strong> <span id="outPts" style="color:#38bdf8;">30.0 Points</span></p>
+      <p><strong>N: Total Investment:</strong> <span id="outInv" style="color:#fff;">Rs. 7800.00</span></p>
+      <p><strong>O: Gross P&L:</strong> <span id="outGross" style="color:#22c55e; font-weight: bold;">Rs. 1950.00</span></p>
+      <p><strong>Q: Net P&L:</strong> <span id="outNet" style="color:#22c55e; font-weight: bold; font-size: 16px;">Rs. 1881.51</span></p>
+      <p><strong>R: Risk to Reward:</strong> <span id="outRR" style="color:#38bdf8;">1 : 1.5</span></p>
+      <p><strong>S: ROI %:</strong> <span id="outROI" style="color:#f59e0b; font-weight: bold;">24.12%</span></p>
+    </div>
+
+    <!-- Copy Row Button -->
+    <button class="btn-copy" onclick="copyOptionRow()">
+      📋 Copy Full Row (Column B to Chart Link)
+    </button>
+  </div>
+
+  <!-- Telegram Channel Button (Always visible) -->
+  <a href="https://t.me/ExtrasalaryTrading" target="_blank" class="btn-social btn-tg">
+    ✈️ Join Telegram Group (@ExtrasalaryTrading)
+  </a>
+</div>
+
+<script>
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxYIR0tS3EWJbOf2sVNNtcI0SH-qHP-Wls6etV1ISglF2QRw-UKlAyOYx_EXceNXvzARA/exec";
+
+function switchAuthTab(tab) {
+  const loginPart = document.getElementById('loginFormPart');
+  const regPart = document.getElementById('regFormPart');
+  const loginBtn = document.getElementById('loginTabBtn');
+  const regBtn = document.getElementById('regTabBtn');
+  const err = document.getElementById('errorMsg');
+  err.innerText = "";
+
+  if(tab === 'login') {
+    loginPart.style.display = 'block';
+    regPart.style.display = 'none';
+    loginBtn.style.background = '#38bdf8';
+    loginBtn.style.color = '#0f172a';
+    regBtn.style.background = '#334155';
+    regBtn.style.color = '#fff';
+  } else {
+    loginPart.style.display = 'none';
+    regPart.style.display = 'block';
+    regBtn.style.background = '#3b82f6';
+    regBtn.style.color = '#fff';
+    loginBtn.style.background = '#334155';
+    loginBtn.style.color = '#fff';
+  }
+}
+
+function handleAutoLogin() {
+  const user = document.getElementById('loginUser').value.trim();
+  const pass = document.getElementById('loginPass').value.trim();
+  const err = document.getElementById('errorMsg');
+
+  if(!user || !pass) {
+    err.style.color = '#ef4444';
+    err.innerText = "⚠️ कृपया यूजरनेम और पासवर्ड दोनों भरें!";
+    return;
+  }
+
+  err.style.color = '#38bdf8';
+  err.innerText = "⏳ चेकिंग हो रही है...";
+
+  fetch(GOOGLE_SCRIPT_URL, {
+    method: 'POST',
+    body: JSON.stringify({action: "login", username: user, password: pass})
+  })
+  .then(res => res.json())
+  .then(data => {
+    if(data.status === 'success') {
+      document.getElementById('loginScreen').style.display = 'none';
+      document.getElementById('calculatorContent').style.display = 'block';
+      calculateOptions();
+    } else {
+      err.style.color = '#ef4444';
+      err.innerText = "❌ " + data.message;
+    }
+  })
+  .catch(errBox => {
+    err.style.color = '#ef4444';
+    err.innerText = "❌ सर्वर एरर! कृपया दोबारा कोशिश करें।";
+  });
+}
+
+function handleAutoRegister() {
+  const user = document.getElementById('regUser').value.trim();
+  const isChecked = document.getElementById('subCheck').checked;
+  const err = document.getElementById('errorMsg');
+
+  if(!user) {
+    err.style.color = '#ef4444';
+    err.innerText = "⚠️ कृपया अपना यूजरनेम दर्ज करें!";
+    return;
+  }
+
+  // Mandatory Subscribe Check Validation
+  if(!isChecked) {
+    err.style.color = '#ef4444';
+    err.innerText = "⚠️ कृपया पहले 'मैंने YouTube चैनल सब्सक्राइब कर लिया है' वाले बॉक्स पर टिक करें!";
+    return;
+  }
+
+  err.style.color = '#38bdf8';
+  err.innerText = "⏳ पासवर्ड जनरेट हो रहा है...";
+
+  fetch(GOOGLE_SCRIPT_URL, {
+    method: 'POST',
+    body: JSON.stringify({action: "register", username: user})
+  })
+  .then(res => res.json())
+  .then(data => {
+    if(data.status === 'success') {
+      err.style.color = '#22c55e';
+      err.innerHTML = `✅ बधाई हो! आपका पासवर्ड है: <b>${data.password}</b><br>इसे सुरक्षित रख लें और 'लॉग इन करें' टैब पर क्लिक करके लॉगिन करें।`;
+    } else {
+      err.style.color = '#ef4444';
+      err.innerText = "❌ " + data.message;
+    }
+  })
+  .catch(errBox => {
+    err.style.color = '#ef4444';
+    err.innerText = "❌ सर्वर एरर! कृपया दोबारा कोशिश करें।";
+  });
+}
+
+document.getElementById('tradeDate').valueAsDate = new Date();
+document.getElementById('expiryDate').valueAsDate = new Date();
+
+let globalQty = 0;
+let globalPts = 0;
+let globalInv = 0;
+let globalGross = 0;
+let globalNet = 0;
+let globalRR = "1 : 0";
+let globalROI = 0;
+
+function getLotSize(index) {
+  if (index === 'NIFTY') return 65;
+  if (index === 'BANKNIFTY') return 50;
+  if (index === 'SENSEX') return 20;
+  if (index === 'FINNIFTY') return 25;
+  if (index === 'MIDCPNIFTY') return 50;
+  return 65;
+}
+
+function calculateOptions() {
+  const index = document.getElementById('indexType').value;
+  const lots = parseFloat(document.getElementById('numLots').value) || 0;
+  const entry = parseFloat(document.getElementById('entryPremium').value) || 0;
+  const exit = parseFloat(document.getElementById('exitPremium').value) || 0;
+  const sl = parseFloat(document.getElementById('slPremium').value) || 0;
+  const bsVal = document.getElementById('buySell').value;
+
+  const lotSize = getLotSize(index);
+  globalQty = lots * lotSize;
+  document.getElementById('outQty').innerText = globalQty + ' Qty (' + lots + ' Lots)';
+
+  if (bsVal === "BUY") {
+    globalPts = exit - entry;
+  } else {
+    globalPts = entry - exit;
+  }
+  document.getElementById('outPts').innerText = globalPts.toFixed(1) + ' Points';
+
+  globalInv = entry * globalQty;
+  document.getElementById('outInv').innerText = 'Rs. ' + globalInv.toFixed(2);
+
+  globalGross = globalPts * globalQty;
+  const grossEl = document.getElementById('outGross');
+  grossEl.innerText = 'Rs. ' + globalGross.toFixed(2);
+  grossEl.style.color = globalGross >= 0 ? '#22c55e' : '#ef4444';
+
+  let autoBrokerage = 0;
+  if (entry > 0 || exit > 0) {
+    let I = bsVal;
+    let J = globalQty;
+    let K = entry;
+    let L = exit;
+
+    let part1 = (I === "BUY" ? L : K) * J * 0.001;
+    let part2 = (K + L) * J * 0.0005;
+    let part3 = (40 + (K + L) * J * 0.0005) * 0.18;
+    let part4 = (I === "BUY" ? K : L) * J * 0.00015;
+    let part5 = (K + L) * J * 0.000001;
+
+    autoBrokerage = 40 + part1 + part2 + part3 + part4 + part5;
+  }
+  
+  document.getElementById('brokerage').value = autoBrokerage.toFixed(2);
+  
+  globalNet = globalGross - autoBrokerage;
+  const netEl = document.getElementById('outNet');
+  netEl.innerText = 'Rs. ' + globalNet.toFixed(2);
+  netEl.style.color = globalNet >= 0 ? '#22c55e' : '#ef4444';
+
+  const winLossInput = document.getElementById('winLoss');
+  if (globalNet > 0) {
+    winLossInput.value = "WIN";
+    winLossInput.style.color = "#22c55e";
+  } else if (globalNet < 0) {
+    winLossInput.value = "LOSS";
+    winLossInput.style.color = "#ef4444";
+  } else {
+    winLossInput.value = "BREAKEVEN";
+    winLossInput.style.color = "#f8fafc";
+  }
+
+  const riskPts = Math.abs(entry - sl);
+  const rewardPts = Math.abs(globalPts);
+  if (riskPts > 0) {
+    const rrRatio = rewardPts / riskPts;
+    globalRR = '1 : ' + rrRatio.toFixed(1);
+  } else {
+    globalRR = '1 : 0';
+  }
+  document.getElementById('outRR').innerText = globalRR;
+
+  if (globalInv > 0) {
+    globalROI = (globalNet / globalInv) * 100;
+  } else {
+    globalROI = 0;
+  }
+  document.getElementById('outROI').innerText = globalROI.toFixed(2) + '%';
+}
+
+function copyOptionRow() {
+  const dateVal = document.getElementById('tradeDate').value;
+  const dayVal = document.getElementById('tradeDay').value;
+  const indexVal = document.getElementById('indexType').value;
+  const optTypeVal = document.getElementById('optionType').value;
+  const strikeVal = document.getElementById('strikePrice').value;
+  const expVal = document.getElementById('expiryDate').value;
+  const stratVal = document.getElementById('strategy').value;
+  const bsVal = document.getElementById('buySell').value;
+  const brokVal = document.getElementById('brokerage').value; 
+  const entryVal = document.getElementById('entryPremium').value;
+  const exitVal = document.getElementById('exitPremium').value;
+  const noteVal = document.getElementById('tradeNote').value;
+  const winLossVal = document.getElementById('winLoss').value; 
+  const chartVal = document.getElementById('chartLink').value;
+
+  const rowData = `${dateVal}\t${dayVal}\t${indexVal}\t${optTypeVal}\t${strikeVal}\t${expVal}\t${stratVal}\t${bsVal}\t${globalQty}\t${entryVal}\t${exitVal}\t${globalPts.toFixed(1)}\t${globalInv.toFixed(2)}\t${globalGross.toFixed(2)}\t${brokVal}\t${globalNet.toFixed(2)}\t${globalRR}\t${globalROI.toFixed(2)}%\t${noteVal}\t${winLossVal}\t${chartVal}`;
+
+  navigator.clipboard.writeText(rowData).then(() => {
+    alert("✨ डेटा B से Chart Link तक सफलतापूर्वक कॉपी हो गया है!\n\nअपनी Google Sheet में Column B की पहली सेल पर क्लिक करके Ctrl + V दबाएं।");
+  });
+}
+</script>

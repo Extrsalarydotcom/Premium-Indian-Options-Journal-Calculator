@@ -1,4 +1,4 @@
-<!-- Premium Indian Options Journal Calculator (With Subscribe Checkbox Integration) -->
+<!-- Premium Indian Options Journal Calculator (Ultra Secure Edition) -->
 <style>
   .calc-container {
     max-width: 650px;
@@ -10,7 +10,26 @@
     font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
     border: 1px solid #334155;
+    
+    /* टेक्स्ट सिलेक्शन और मोबाइल पॉपअप ब्लॉक */
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
   }
+
+  /* केवल इनपुट, सेलेक्ट और टेक्स्टएरिया में टाइपिंग चालू रखने के लिए */
+  .calc-container input, 
+  .calc-container select, 
+  .calc-container textarea {
+    -webkit-touch-callout: default !important;
+    -webkit-user-select: auto !important;
+    -moz-user-select: auto !important;
+    -ms-user-select: auto !important;
+    user-select: auto !important;
+  }
+
   .calc-title {
     text-align: center;
     color: #38bdf8;
@@ -206,10 +225,10 @@
       पहले YouTube चैनल सब्सक्राइब करें और नीचे दिए गए बॉक्स पर टिक करके अपना पासवर्ड जनरेट करें!
     </p>
 
-    <!-- YouTube & Telegram Action Buttons (Direct Subscribe Link with Popup) -->
+    <!-- YouTube & Telegram Action Buttons (सुरक्षित noopener noreferrer टैग के साथ) -->
     <div style="display: flex; gap: 10px; justify-content: center; margin-bottom: 20px; flex-wrap: wrap;">
-      <a href="https://www.youtube.com/@Extrasalary225?sub_confirmation=1" target="_blank" class="btn-social btn-yt" style="width: 48%; margin-top:0;">🔴 Subscribe YouTube</a>
-      <a href="https://t.me/ExtrasalaryTrading" target="_blank" class="btn-social btn-tg" style="width: 48%; margin-top:0;">✈️ Join Telegram</a>
+      <a href="https://www.youtube.com/@Extrasalary225?sub_confirmation=1" target="_blank" rel="noopener noreferrer" class="btn-social btn-yt" style="width: 48%; margin-top:0;">🔴 Subscribe YouTube</a>
+      <a href="https://t.me/ExtrasalaryTrading" target="_blank" rel="noopener noreferrer" class="btn-social btn-tg" style="width: 48%; margin-top:0;">✈️ Join Telegram</a>
     </div>
 
     <!-- Tab Switch Buttons -->
@@ -365,14 +384,18 @@
     </button>
   </div>
 
-  <!-- Telegram Channel Button (Always visible) -->
-  <a href="https://t.me/ExtrasalaryTrading" target="_blank" class="btn-social btn-tg">
+  <!-- Telegram Channel Button (सुरक्षित noopener noreferrer टैग के साथ) -->
+  <a href="https://t.me/ExtrasalaryTrading" target="_blank" rel="noopener noreferrer" class="btn-social btn-tg">
     ✈️ Join Telegram Group (@ExtrasalaryTrading)
   </a>
 </div>
 
 <script>
+// --- AUTHENTICATION & CORE LOGIC ---
 const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxYIR0tS3EWJbOf2sVNNtcI0SH-qHP-Wls6etV1ISglF2QRw-UKlAyOYx_EXceNXvzARA/exec";
+
+// एंटी-बाईपास सुरक्षा टोकन
+let isUserAuthenticated = false;
 
 function switchAuthTab(tab) {
   const loginPart = document.getElementById('loginFormPart');
@@ -420,15 +443,16 @@ function handleAutoLogin() {
   .then(res => res.json())
   .then(data => {
     if(data.status === 'success') {
+      isUserAuthenticated = true; // एक्सेस अधिकृत किया गया
       document.getElementById('loginScreen').style.display = 'none';
       document.getElementById('calculatorContent').style.display = 'block';
       calculateOptions();
     } else {
       err.style.color = '#ef4444';
-      err.innerText = "❌ " + data.message;
+      err.innerText = "❌ " + (data.message || "अवैध क्रेडेंशियल्स!");
     }
   })
-  .catch(errBox => {
+  .catch(() => {
     err.style.color = '#ef4444';
     err.innerText = "❌ सर्वर एरर! कृपया दोबारा कोशिश करें।";
   });
@@ -445,7 +469,6 @@ function handleAutoRegister() {
     return;
   }
 
-  // Mandatory Subscribe Check Validation
   if(!isChecked) {
     err.style.color = '#ef4444';
     err.innerText = "⚠️ कृपया पहले 'मैंने YouTube चैनल सब्सक्राइब कर लिया है' वाले बॉक्स पर टिक करें!";
@@ -466,15 +489,16 @@ function handleAutoRegister() {
       err.innerHTML = `✅ बधाई हो! आपका पासवर्ड है: <b>${data.password}</b><br>इसे सुरक्षित रख लें और 'लॉग इन करें' टैब पर क्लिक करके लॉगिन करें।`;
     } else {
       err.style.color = '#ef4444';
-      err.innerText = "❌ " + data.message;
+      err.innerText = "❌ " + (data.message || "पंजीकरण विफल रहा!");
     }
   })
-  .catch(errBox => {
+  .catch(() => {
     err.style.color = '#ef4444';
     err.innerText = "❌ सर्वर एरर! कृपया दोबारा कोशिश करें।";
   });
 }
 
+// तारीख इनिशियलाइज़ेशन
 document.getElementById('tradeDate').valueAsDate = new Date();
 document.getElementById('expiryDate').valueAsDate = new Date();
 
@@ -496,6 +520,9 @@ function getLotSize(index) {
 }
 
 function calculateOptions() {
+  // अगर कोई इंस्पेक्ट एलिमेंट से बिना लॉगिन किए खोल भी ले, तो कोड काम नहीं करेगा
+  if (!isUserAuthenticated) return;
+
   const index = document.getElementById('indexType').value;
   const lots = parseFloat(document.getElementById('numLots').value) || 0;
   const entry = parseFloat(document.getElementById('entryPremium').value) || 0;
@@ -576,6 +603,11 @@ function calculateOptions() {
 }
 
 function copyOptionRow() {
+  if (!isUserAuthenticated) {
+    alert("⚠️ कृपया पहले लॉगिन करें!");
+    return;
+  }
+
   const dateVal = document.getElementById('tradeDate').value;
   const dayVal = document.getElementById('tradeDay').value;
   const indexVal = document.getElementById('indexType').value;
@@ -595,6 +627,79 @@ function copyOptionRow() {
 
   navigator.clipboard.writeText(rowData).then(() => {
     alert("✨ डेटा B से Chart Link तक सफलतापूर्वक कॉपी हो गया है!\n\nअपनी Google Sheet में Column B की पहली सेल पर क्लिक करके Ctrl + V दबाएं।");
+  }).catch(() => {
+    alert("❌ कॉपी करने में असमर्थ। कृपया मैन्युअली प्रयास करें।");
   });
 }
+
+// --- ULTRA LEVEL CLIENT-SIDE SECURITY SHIELD ---
+
+// 1. राइट-क्लिक और मोबाइल लॉन्ग-प्रेस ब्लॉक (इनपुट बॉक्स को छोड़कर)
+document.addEventListener('contextmenu', function(e) {
+  const isInputField = ['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName);
+  if (!isInputField) {
+    e.preventDefault();
+    return false;
+  }
+});
+
+// 2. बिना अनुमति टेक्स्ट कॉपी / कट ब्लॉक (कैलकुलेटर कॉपी बटन अप्रभावित रहेगा)
+document.addEventListener('copy', function(e) {
+  const isInputField = ['INPUT', 'TEXTAREA'].includes(e.target.tagName);
+  if (!isInputField) {
+    e.preventDefault();
+    return false;
+  }
+});
+
+document.addEventListener('cut', function(e) {
+  const isInputField = ['INPUT', 'TEXTAREA'].includes(e.target.tagName);
+  if (!isInputField) {
+    e.preventDefault();
+    return false;
+  }
+});
+
+// 3. ड्रैग सिलेक्शन ब्लॉक
+document.addEventListener('dragstart', function(e) {
+  const isInputField = ['INPUT', 'TEXTAREA'].includes(e.target.tagName);
+  if (!isInputField) {
+    e.preventDefault();
+    return false;
+  }
+});
+
+// 4. DevTools और कीबोर्ड शॉर्टकट ब्लॉक
+document.addEventListener('keydown', function(e) {
+  const isInputField = ['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName);
+
+  // F12 ब्लॉक
+  if (e.key === 'F12') {
+    e.preventDefault();
+    return false;
+  }
+
+  // Ctrl + Shift + I / J / C (DevTools शॉर्टकट)
+  if ((e.ctrlKey || e.metaKey) && e.shiftKey) {
+    const k = e.key.toLowerCase();
+    if (k === 'i' || k === 'j' || k === 'c') {
+      e.preventDefault();
+      return false;
+    }
+  }
+
+  // Ctrl / Command शॉर्टकट ब्लॉक (View Source, Save, Print)
+  if (e.ctrlKey || e.metaKey) {
+    const k = e.key.toLowerCase();
+    if (['u', 's', 'p'].includes(k)) {
+      e.preventDefault();
+      return false;
+    }
+    // गैर-इनपुट पर Select All या Copy ब्लॉक
+    if (['a', 'c'].includes(k) && !isInputField) {
+      e.preventDefault();
+      return false;
+    }
+  }
+});
 </script>
